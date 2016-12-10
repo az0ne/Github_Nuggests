@@ -34,22 +34,24 @@ def mailfilter(list,mod):
             maillogin_126(usern,password,url)
 
 def read_page(keyword,pages):
+    pages = int(pages)
     print 'Search Keyword : '+keyword
     print 'Scanning '+str(pages)+' pages from Github!'
     for page in range(pages):
         headers = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36 115Browser/7.2.5'
         cookie = {"Cookie":"_octo=GH1.1.1911767667.1480641870; logged_in=yes; dotcom_user=menu88; _ga=GA1.2.1291948085.1480641870; tz=Asia%2FShanghai; _gh_sess=eyJzZXNzaW9uX2lkIjoiNWY4YTVkMTk3YzRhNzg3ZWEwYjM5OWUwZWNhNDY2ZWIiLCJjb250ZXh0IjoiLyIsInNweV9yZXBvIjoibWVudTg4L215cHVibGljIiwic3B5X3JlcG9fYXQiOjE0ODEyNDY5NDN9--170066295059ff1fc3d8b46b50d3c62847ac82eb; user_session=JA153nFX9QfOaFbu2vCdVLPuU_9_K9NvEO4mvMqZ4NaK3TjX; __Host-user_session_same_site=JA153nFX9QfOaFbu2vCdVLPuU_9_K9NvEO4mvMqZ4NaK3TjX"}
         url = 'https://github.com/search?l=PHP&p='+str(page)+'&q='+keyword+'&type=Code&utf8=%E2%9C%93'
-        page = requests.get(url,cookies = cookie).content
-        #print page
-        soup = BeautifulSoup(page,"html.parser")
+        print '正在抓取第'+str(page)+'页!'
+        pagecon = requests.get(url,cookies = cookie).content
+        soup = BeautifulSoup(pagecon,"html.parser")
         for link in soup.find_all('a'):
             url = link.get('href')
             if 'blob' in url:
                 url = url.split('#')[0]
                 url = url.split('blob/')[0]+url.split('blob/')[1]
                 urllist.append('https://raw.githubusercontent.com'+url)
-pages = sys.argv[1]
+pages = 5
+#pages = sys.argv[1]
 read_page('smtp+163.com',pages)
 urllist = list(set(urllist))
 mailfilter(urllist,'163')
@@ -65,4 +67,3 @@ urllist =[]
 read_page('smtp+126.com',pages)
 urllist = list(set(urllist))
 mailfilter(urllist,'126')
-
